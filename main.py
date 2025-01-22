@@ -1,13 +1,10 @@
-import os
+import asyncio
 from dotenv import load_dotenv
 from src.utils import read_text_file
 from src.graph import UpworkAutomation
-import google.generativeai as genai
 
 # Load environment variables from a .env file
 load_dotenv()
-
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 if __name__ == "__main__":
     # Job title to look for
@@ -18,4 +15,10 @@ if __name__ == "__main__":
 
     # run automation
     automation = UpworkAutomation(profile)
-    automation.run(job_title=job_title)
+    asyncio.run(automation.run(job_title=job_title))
+    
+    # Visualize automation graph as a PNG image
+    # output_path = "./output_graph.png"  # Specify the desired output path
+    # with open(output_path, "wb") as file:
+    #     file.write(automation.graph.get_graph().draw_mermaid_png())
+    # print(f"Graph saved as PNG at {output_path}")

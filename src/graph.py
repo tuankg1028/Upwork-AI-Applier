@@ -1,199 +1,98 @@
-import pandas as pd
-from datetime import datetime
 from langgraph.graph import END, StateGraph
-from typing_extensions import TypedDict
-from typing import List
 from colorama import Fore, Style
-from .utils import (
-    scrape_upwork_data,
-    score_scaped_jobs,
-    convert_jobs_matched_to_string_list,
-    generate_cover_letter,
-    generate_interview_script_content,
-    save_scraped_jobs_to_csv,
-)
+from .nodes import MainGraphNodes, CreateJobApplicationNodes
+from .state import ApplicationState, ApplicationStateInput, MainGraphState, MainGraphStateInput
 
-COVER_LETTERS_FILE = "./files/cover_letter.txt"
-
-
-class GraphState(TypedDict):
-    job_title: str
-    scraped_jobs_df: pd.DataFrame
-    matches: List[str]
-    job_description: str
-    cover_letter: str
-    call_script: str
-    num_matches: int
-
+# Path to the cover letter template file
+COVER_LETTERS_FILE = "./files/cover_letter.md"
 
 class UpworkAutomation:
-    def __init__(self, profile, num_jobs=20):
-        # Freelancer profile/resume
+    def __init__(self, profile, num_jobs=10, batch_size=5):
+        """
+        Initialize the Upwork automation tool with user profile, job count, and batch size.
+
+        Args:
+            profile: User profile information for job applications.
+            num_jobs (int): Number of jobs to process.
+            batch_size (int): Batch size for parallel job processing.
+        """
         self.profile = profile
-
-        # Number of jobs to collect
         self.number_of_jobs = num_jobs
-
-        # Build graph
+        self.batch_size = batch_size
         self.graph = self.build_graph()
 
-    def scrape_upwork_jobs(self, state):
-        """
-        Scrape jobs based on job title provided
-
-        @param state: The current state of the application.
-        @return: Updated state with scraped jobs.
-        """
-        job_title = state["job_title"]
-
-        print(
-            Fore.YELLOW
-            + f"----- Scraping Upwork jobs for: {job_title} -----\n"
-            + Style.RESET_ALL
-        )
-        job_listings_df = scrape_upwork_data(job_title, self.number_of_jobs)
-
-        print(
-            Fore.GREEN
-            + f"----- Scraped {len(job_listings_df)} jobs -----\n"
-            + Style.RESET_ALL
-        )
-        return {**state, "scraped_jobs_df": job_listings_df}
-
-    def score_scraped_jobs(self, state):
-        print(Fore.YELLOW + "----- Scoring scraped jobs -----\n" + Style.RESET_ALL)
-        jobs_df = score_scaped_jobs(state["scraped_jobs_df"], self.profile)
-        jobs_matched = jobs_df[jobs_df["score"] >= 7]
-        matches = convert_jobs_matched_to_string_list(jobs_matched)
-        return {
-            "scraped_jobs_df": jobs_df,
-            "matches": matches,
-            "num_matchs": len(matches),
-        }
-
-    def check_for_job_matches(self, state):
-        print(
-            Fore.YELLOW
-            + "----- Checking for remaining job matches -----\n"
-            + Style.RESET_ALL
-        )
-        return state
-
-    def need_to_process_matches(self, state):
-        """
-        Check if there are any job matches.
-
-        @param state: The current state of the application.
-        @return: "empty" if no job matches, otherwise "process".
-        """
-        if len(state["matches"]) == 0:
-            print(Fore.RED + "No job matches remaining\n" + Style.RESET_ALL)
-            save_scraped_jobs_to_csv(state["scraped_jobs_df"])
-            return "No matches"
-        else:
-            print(
-                Fore.GREEN
-                + f"There are {len(state['matches'])} Job matches remaining to process\n"
-                + Style.RESET_ALL
-            )
-            return "Process jobs"
-
-    def generate_job_application_content(self, state):
-        return state
-
-    def generate_cover_letter(self, state):
-        """
-        Generate cover letter based on the job description and the profile.
-
-        @param state: The current state of the application.
-        @return: Updated state with generated cover letter.
-        """
-        print(Fore.YELLOW + "----- Generating cover letter -----\n" + Style.RESET_ALL)
-        matches = state["matches"]
-        job_description = str(matches[-1])
-        cover_letter = generate_cover_letter(job_description, self.profile)
-        return {"job_description": job_description, "cover_letter": cover_letter}
-
-    def generate_interview_script_content(self, state):
-        print(Fore.YELLOW + "----- Generating call script -----\n" + Style.RESET_ALL)
-        matches = state["matches"]
-        job_description = str(matches[-1])
-        call_script = generate_interview_script_content(job_description)
-        return {"call_script": call_script}
-
-    def save_job_application_content(self, state):
-        print(
-            Fore.YELLOW + "----- Saving cover letter & script -----\n" + Style.RESET_ALL
-        )
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-        with open(COVER_LETTERS_FILE, "a") as file:
-            file.write("\n" + "=" * 80 + "\n")
-            file.write(f"DATE: {timestamp}\n")
-            file.write("=" * 80 + "\n\n")
-
-            # Job Description Section
-            file.write("### Job Description ###\n")
-            file.write(state["job_description"] + "\n\n")
-
-            # Cover Letter Section
-            file.write("### Cover Letter ###\n")
-            file.write(state["cover_letter"] + "\n\n")
-
-            # Call Script Section
-            file.write("### Call Script ###\n")
-            file.write(state["call_script"] + "\n")
-
-            file.write("\n" + "/" * 100 + "\n")
-
-        # Remove already processed job
-        state["matches"].pop()
-        return {"matches": state["matches"]}
-
     def build_graph(self):
-        graph = StateGraph(GraphState)
+        """
+        Build the state graph for automating Upwork job applications.
 
-        # create all required nodes
-        graph.add_node("scrape_upwork_jobs", self.scrape_upwork_jobs)
-        graph.add_node("score_scraped_jobs", self.score_scraped_jobs)
-        graph.add_node("check_for_job_matches", self.check_for_job_matches)
-        graph.add_node(
-            "generate_job_application_content", self.generate_job_application_content
-        )
-        graph.add_node("generate_cover_letter", self.generate_cover_letter)
-        graph.add_node(
-            "generate_interview_script_content",
-            self.generate_interview_script_content,
-        )
-        graph.add_node(
-            "save_job_application_content", self.save_job_application_content
-        )
+        Returns:
+            Compiled main graph for the automation process.
+        """
+        # Create job application subgraph
+        create_job_application_nodes = CreateJobApplicationNodes(self.profile)
+        generate_application_subgraph = StateGraph(ApplicationState, input=ApplicationStateInput)
 
-        # Link nodes to complete workflow
-        graph.set_entry_point("scrape_upwork_jobs")
-        graph.add_edge("scrape_upwork_jobs", "score_scraped_jobs")
-        graph.add_edge("score_scraped_jobs", "check_for_job_matches")
-        graph.add_conditional_edges(
+        # Define subgraph nodes for generating job applications
+        generate_application_subgraph.add_node(create_job_application_nodes.gather_relevant_infos_from_profile)
+        generate_application_subgraph.add_node(create_job_application_nodes.generate_cover_letter)
+        generate_application_subgraph.add_node(create_job_application_nodes.generate_interview_preparation)
+        generate_application_subgraph.add_node( create_job_application_nodes.finalize_job_application)
+
+        # Set entry point and define transitions for the subgraph
+        generate_application_subgraph.set_entry_point("gather_relevant_infos_from_profile")
+        generate_application_subgraph.add_edge("gather_relevant_infos_from_profile", "generate_cover_letter")
+        generate_application_subgraph.add_edge("gather_relevant_infos_from_profile", "generate_interview_preparation")
+        generate_application_subgraph.add_edge("generate_cover_letter", "finalize_job_application")
+        generate_application_subgraph.add_edge("generate_interview_preparation", "finalize_job_application")
+        generate_application_subgraph.add_edge("finalize_job_application", END)
+
+        # Create main automation graph
+        main_automation_nodes = MainGraphNodes(self.profile, self.number_of_jobs, self.batch_size)
+        main_graph = StateGraph(MainGraphState, input=MainGraphStateInput)
+
+        # Define main graph nodes for the workflow
+        main_graph.add_node(main_automation_nodes.scrape_upwork_jobs)
+        main_graph.add_node(main_automation_nodes.score_scraped_jobs)
+        main_graph.add_node(main_automation_nodes.check_for_job_matches)
+        main_graph.add_node(main_automation_nodes.generate_jobs_applications)
+        main_graph.add_node("create_job_application_content", generate_application_subgraph.compile())
+        main_graph.add_node(main_automation_nodes.save_generated_jobs_application)
+
+        # Define transitions for the main graph
+        main_graph.set_entry_point("scrape_upwork_jobs")
+        main_graph.add_conditional_edges("scrape_upwork_jobs", main_automation_nodes.initiate_jobs_scoring, ["score_scraped_jobs"])
+        main_graph.add_edge("score_scraped_jobs", "check_for_job_matches")
+        main_graph.add_conditional_edges(
             "check_for_job_matches",
-            self.need_to_process_matches,
-            {"Process jobs": "generate_job_application_content", "No matches": END},
+            main_automation_nodes.need_to_process_matches,
+            {"Process jobs": "generate_jobs_applications", "No matches": END}
         )
-        graph.add_edge("generate_job_application_content", "generate_cover_letter")
-        graph.add_edge(
-            "generate_job_application_content", "generate_interview_script_content"
+        main_graph.add_conditional_edges(
+            "generate_jobs_applications",
+            main_automation_nodes.initiate_content_generation,
+            ["create_job_application_content"],
         )
-        graph.add_edge("generate_cover_letter", "save_job_application_content")
-        graph.add_edge(
-            "generate_interview_script_content", "save_job_application_content"
+        main_graph.add_edge("create_job_application_content", "save_generated_jobs_application")
+        main_graph.add_conditional_edges(
+            "save_generated_jobs_application",
+            main_automation_nodes.need_to_process_matches,
+            {"Process jobs": "generate_jobs_applications", "No matches": END}
         )
-        graph.add_edge("save_job_application_content", "check_for_job_matches")
+        
+        # Compile and return the main graph
+        return main_graph.compile()
 
-        return graph.compile()
+    async def run(self, job_title):
+        """
+        Execute the Upwork automation workflow.
 
-    def run(self, job_title):
-        print(
-            Fore.BLUE + "----- Running Upwork Jobs Automation -----\n" + Style.RESET_ALL
-        )
+        Args:
+            job_title (str): Title of the job to process.
+
+        Returns:
+            Final state of the automation process.
+        """
+        print(Fore.BLUE + "----- Running Upwork Jobs Automation -----\n" + Style.RESET_ALL)
         config = {"recursion_limit": 1000}
-        state = self.graph.invoke({"job_title": job_title}, config)
+        state = await self.graph.ainvoke({"job_title": job_title}, config)
         return state

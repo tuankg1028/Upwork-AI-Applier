@@ -1,7 +1,12 @@
-from src.utils import scrape_upwork_data
+import asyncio
+from src.scraper import UpworkJobScraper
 
 if __name__ == "__main__":
     search_query = "AI agent developer"
     number_of_jobs = 10
-    job_listings = scrape_upwork_data(search_query, number_of_jobs)
-    print(job_listings)
+    
+    scraper = UpworkJobScraper()
+    result = asyncio.run(scraper.scrape_upwork_data(search_query, number_of_jobs))
+    print(f"Result: {result}")
+    
+    scraper.save_jobs_to_csv(result, "upwork_jobs_data.csv")

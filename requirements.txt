@@ -1,7 +1,10 @@
 langgraph
+langchain-core
+langchain_google_genai
+langchain_openai
 playwright
 html2text
 pandas
-google-generativeai
 colorama
 python-dotenv
+bs4
