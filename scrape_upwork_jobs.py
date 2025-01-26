@@ -1,5 +1,9 @@
 import asyncio
 from src.scraper import UpworkJobScraper
+from dotenv import load_dotenv
+
+# Load environment variables from a .env file
+load_dotenv()
 
 if __name__ == "__main__":
     search_query = "AI agent developer"

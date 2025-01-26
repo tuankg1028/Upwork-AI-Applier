@@ -79,7 +79,7 @@ class MainGraphNodes:
         results = await ainvoke_llm(
             system_prompt=score_jobs_prompt,
             user_message=f"Evaluate these Jobs:\n\n{jobs_list}",
-            model="google/gemini-1.5-flash",
+            model="openai/gpt-4o-mini",
             response_format=JobScores
         )
         jobs_scores = results.model_dump()
@@ -214,7 +214,7 @@ class CreateJobApplicationNodes:
         information = await ainvoke_llm(
             system_prompt=profile_analysis_prompt,
             user_message=state["job_description"],
-            model="google/gemini-1.5-flash"
+            model="openai/gpt-4o-mini"
         )
         return {"relevant_infos": information}
 
@@ -232,7 +232,7 @@ class CreateJobApplicationNodes:
         result = await ainvoke_llm(
             system_prompt=cover_letter_prompt,
             user_message=f"Write a cover letter for the job described below:\n\n{state['job_description']}",
-            model="google/gemini-1.5-flash",
+            model="openai/gpt-4o-mini",
             response_format=CoverLetter
         )
         return {"cover_letter": result.letter}
@@ -246,7 +246,7 @@ class CreateJobApplicationNodes:
         result = await ainvoke_llm(
             system_prompt=interview_preparation_prompt,
             user_message=f"Create preparation for the job described below:\n\n{state['job_description']}",
-            model="google/gemini-1.5-flash",
+            model="openai/gpt-4o-mini",
             response_format=CallScript
         )
         return {"interview_prep": result.script}

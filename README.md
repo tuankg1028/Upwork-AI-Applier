@@ -95,6 +95,7 @@ This is the detailed flow of the system:
 
    ```sh
    pip install -r requirements.txt
+   playwright install firefox
    ```
 
 3. **Start the workflow:**

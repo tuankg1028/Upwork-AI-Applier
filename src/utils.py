@@ -55,7 +55,7 @@ def get_llm_by_provider(model_string, temperature=0.1):
 async def ainvoke_llm(
     system_prompt,
     user_message,
-    model="google/gemini-1.5-flash",  # Default model name with provider
+    model="openai/gpt-4o-mini",  # Default to GPT-4o-mini
     response_format=None
 ):
     """
