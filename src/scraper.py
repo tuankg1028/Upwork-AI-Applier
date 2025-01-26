@@ -85,6 +85,7 @@ class UpworkJobScraper:
         """
         Scrapes and processes a single job page.
         """
+        page = None  # Initialize page to None to ensure it is closed in the finally block
         try:
             browser_context = await get_playwright_browser_context(browser)
             page = await browser_context.new_page()
