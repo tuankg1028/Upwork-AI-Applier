@@ -18,7 +18,7 @@ if __name__ == "__main__":
     asyncio.run(automation.run(job_title=job_title))
     
     # Visualize automation graph as a PNG image
-    # output_path = "./output_graph.png"  # Specify the desired output path
+    # output_path = "./automation_graph.png"  # Specify the desired output path
     # with open(output_path, "wb") as file:
-    #     file.write(automation.graph.get_graph().draw_mermaid_png())
+    #     file.write(automation.graph.get_graph(xray=True).draw_mermaid_png())
     # print(f"Graph saved as PNG at {output_path}")

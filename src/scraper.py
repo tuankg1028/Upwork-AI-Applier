@@ -1,14 +1,13 @@
+import re
 import asyncio
-import pandas as pd
-from pathlib import Path
+import hashlib
 from bs4 import BeautifulSoup
 from tqdm.asyncio import tqdm_asyncio
 from playwright.async_api import async_playwright
 from src.utils import ainvoke_llm, get_playwright_browser_context, convert_html_to_markdown
+from src.database import job_exists
 from src.structured_outputs import JobInformation
 from src.prompts import SCRAPER_PROMPT
-
-FILE_PATH = "./data/upwork_jobs_data.csv"
 
 
 class UpworkJobScraper:
@@ -64,28 +63,52 @@ class UpworkJobScraper:
             jobs_data = [job for job in jobs_data if job]
 
             # Process and return the job info data
-            jobs_df = self.process_job_info_data(jobs_data)
-            return jobs_df
+            jobs_data = self.process_job_info_data(jobs_data)
+                
+            return jobs_data
     
+    def extract_job_id_from_url(self, url):
+        """
+        Extract job ID from a job URL.
+        """
+        # Extract the part between 'apply/' and '/?referrer'
+        match = re.search(r'apply/([^/]+)/?', url)
+        if match:
+            return match.group(1)
+        return None
+
     def extract_jobs_urls(self, html):
         """
-        Extracts job URLs from the HTML content.
+        Extracts job URLs from the HTML content and filters out already collected jobs.
         """
         soup = BeautifulSoup(html, 'html.parser')
         job_links = []
+        skipped_count = 0
+        
         for h2 in soup.find_all('h2', class_='job-tile-title'):
             a_tag = h2.find('a')
             if a_tag:
                 job_link = a_tag['href'].replace('/jobs', 'https://www.upwork.com/freelance-jobs/apply', 1)
+                job_id = self.extract_job_id_from_url(job_link)
+                
+                # Skip if job already exists in database
+                if job_id and job_exists(job_id):
+                    skipped_count += 1
+                    continue
+                
+                # clean the job url
+                job_link = job_link.split('?')[0] if '?' in job_link else job_link 
                 job_links.append(job_link)
-
+        
+        if skipped_count > 0:
+            print(f"Skipped {skipped_count} already collected jobs")
+            
         return job_links
 
     async def scrape_job_details(self, browser, url):
         """
         Scrapes and processes a single job page.
         """
-        page = None  # Initialize page to None to ensure it is closed in the finally block
         try:
             browser_context = await get_playwright_browser_context(browser)
             page = await browser_context.new_page()
@@ -112,8 +135,15 @@ class UpworkJobScraper:
 
             # Include job link in the output
             job_info_dict["link"] = url
+            
+            # Extract and add job_id
+            job_id = self.extract_job_id_from_url(url)
+            
+            # hash the job_id
+            job_info_dict["job_id"] = hashlib.sha256(job_id.encode()).hexdigest()
 
-            # Unpack client information into the main dictionary
+            # Ensure field names match the database schema
+            # Map client_information fields to the correct database field names
             client_info = job_info_dict.pop("client_information", None)
             if client_info:
                 job_info_dict.update({
@@ -129,24 +159,9 @@ class UpworkJobScraper:
             await page.close()  # Ensure the page is closed
 
     def process_job_info_data(self, jobs_data):
-        jobs_df = pd.DataFrame(jobs_data)
-        jobs_df["payment_rate"] = jobs_df["payment_rate"].str.replace(
-            r"\$?(\d+\.?\d*)\s*\n*-\n*\$?(\d+\.?\d*)", r"$\1-$\2", regex=True
-        )
-        return jobs_df
-
-    def save_jobs_to_csv(self, jobs_df: pd.DataFrame, file_path: str=FILE_PATH):
-        """
-        Saves the jobs DataFrame to a CSV file. Appends to the file if it exists, or creates a new file if it doesn't.
-        """
-        # Ensure the directory exists
-        Path(file_path).parent.mkdir(parents=True, exist_ok=True)
-
-        # Check if the file already exists
-        file_exists = Path(file_path).is_file()
-
-        # Save or append the DataFrame
-        jobs_df.to_csv(file_path, mode='a' if file_exists else 'w', index=False, header=not file_exists)
-
-        action = "Appended to" if file_exists else "Created new"
-        print(f"{action} CSV file at {file_path}")
+        for job in jobs_data:
+            if job.get("payment_rate"):
+                job["payment_rate"] = re.sub(
+                    r"\$?(\d+\.?\d*)\s*\n*-\n*\$?(\d+\.?\d*)", r"$\1-$\2", job["payment_rate"]
+                )
+        return jobs_data

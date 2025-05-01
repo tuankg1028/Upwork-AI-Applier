@@ -133,21 +133,21 @@ def convert_html_to_markdown(html_content):
     markdown_content = re.sub(r"\n{3,}", "\n\n", markdown_content)
     return markdown_content.strip()
 
-def format_scraped_job_for_scoring(jobs_df):
+def format_scraped_job_for_scoring(jobs):
     """
-    Format a DataFrame of scraped jobs for scoring.
+    Format a list of scraped jobs for scoring.
 
     Args:
-        jobs_df (DataFrame): The DataFrame containing scraped job data.
+        jobs (list): The list of scraped job data.
 
     Returns:
         list: A list of dictionaries representing jobs with their IDs.
     """
-    return [{'id': index, **row.to_dict()} for index, row in jobs_df.iterrows()]
+    return [{'id': index, **job} for index, job in enumerate(jobs)]
 
 def convert_jobs_matched_to_string_list(jobs_matched):
     """
-    Convert a DataFrame of matched jobs to a list of formatted strings.
+    Convert a list of matched jobs to a list of formatted strings.
 
     Args:
         jobs_matched (DataFrame): The DataFrame containing matched job data.
@@ -156,12 +156,12 @@ def convert_jobs_matched_to_string_list(jobs_matched):
         list: A list of job descriptions as formatted strings.
     """
     jobs = []
-    for _, row in jobs_matched.iterrows():
-        job = f"# Title: {row['title']}\n"
-        job += f"# Experience Level: {row['experience_level']}\n"
-        job += f"# Description:\n{row['description']}\n\n"
-        job += f"# Proposal Requirements:\n{row['proposal_requirements']}\n"
-        jobs.append(job)
+    for job in jobs_matched:
+        job_str = f"# Title: {job['title']}\n"
+        job_str += f"# Experience Level: {job['experience_level']}\n"
+        job_str += f"# Description:\n{job['description']}\n\n"
+        job_str += f"# Proposal Requirements:\n{job['proposal_requirements']}\n"
+        jobs.append(job_str)
     return jobs
 
 def read_text_file(filename):

@@ -9,7 +9,7 @@ class JobType(str, Enum):
 class ClientInformation(BaseModel):
     joined_date: str = Field(description="The date the client joined the platform")
     location: str = Field(description="The client's location")
-    total_amount_spent: float = Field(description="The total amount spent by the client") 
+    total_spent: str = Field(description="The total amount spent by the client ($)") 
     total_hires: int = Field(description="The total number of hires by the client") 
     company_profile: Optional[str] = Field(
         description="The client's company profile or description"

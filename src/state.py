@@ -1,5 +1,4 @@
 import operator
-import pandas as pd
 from typing import Annotated
 from typing_extensions import TypedDict
 
@@ -8,7 +7,7 @@ class MainGraphStateInput(TypedDict):
 
 class MainGraphState(TypedDict):
     job_title: str
-    scraped_jobs_df: pd.DataFrame
+    scraped_jobs: list[dict]
     scores: Annotated[list, operator.add]
     jobs_processing_batch: list
     matches: list

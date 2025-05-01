@@ -1,4 +1,3 @@
-import pandas as pd
 from datetime import datetime
 from langgraph.constants import Send
 from typing import List
@@ -16,6 +15,7 @@ from .structured_outputs import (
     CallScript,
     JobApplication
 )
+from .database import ensure_db_exists, save_jobs
 from .state import *
 from .prompts import *
 
@@ -25,6 +25,9 @@ class MainGraphNodes:
         self.number_of_jobs = num_jobs
         self.batch_size = batch_size
         self.upwork_scraper = UpworkJobScraper()
+        
+        # Ensure jobs DB exists or create it
+        ensure_db_exists()
 
     async def scrape_upwork_jobs(self, state: MainGraphState):
         """
@@ -40,14 +43,14 @@ class MainGraphNodes:
             + f"----- Scraping Upwork jobs for: {job_title} -----\n"
             + Style.RESET_ALL
         )
-        job_listings_df = await self.upwork_scraper.scrape_upwork_data(job_title, self.number_of_jobs)
+        job_listings = await self.upwork_scraper.scrape_upwork_data(job_title, self.number_of_jobs)
 
         print(
             Fore.GREEN
-            + f"----- Scraped {len(job_listings_df)} jobs -----\n"
+            + f"----- Scraped {len(job_listings)} jobs -----\n"
             + Style.RESET_ALL
         )
-        return {**state, "scraped_jobs_df": job_listings_df}
+        return {**state, "scraped_jobs": job_listings}
 
     def initiate_jobs_scoring(self, state: MainGraphState) -> List[Send]:
         """
@@ -56,10 +59,10 @@ class MainGraphNodes:
         @param state: The current state with scraped jobs.
         @return: A list of Send operations, one for each batch.
         """
-        jobs_df = state["scraped_jobs_df"]
+        jobs = state["scraped_jobs"]
         batches = [
-            jobs_df[i : i + self.batch_size]
-            for i in range(0, len(jobs_df), self.batch_size)
+            jobs[i : i + self.batch_size]
+            for i in range(0, len(jobs), self.batch_size)
         ]
         return [
             Send("score_scraped_jobs", ScoreJobsState(jobs_batch=batch))
@@ -97,20 +100,22 @@ class MainGraphNodes:
             + "----- Checking for remaining job matches -----\n"
             + Style.RESET_ALL
         )
-        all_jobs = state["scraped_jobs_df"]
-        scores_df = pd.DataFrame(state["scores"])
-        all_jobs["score"] = scores_df["score"]
-
-        jobs_matched = all_jobs[all_jobs["score"] >= 7]
+        all_jobs = state["scraped_jobs"]
         
-        # Save matched jobs details to csv
-        self.upwork_scraper.save_jobs_to_csv(all_jobs)
+        # Add scores to jobs
+        all_jobs = [job | {"score": score["score"]} for job, score in zip(all_jobs, state["scores"])]
+        print(all_jobs)
+        
+        jobs_matched = [job for job in all_jobs if job["score"] >= 7]
+        
+        # Save matched jobs details to DB
+        save_jobs(all_jobs)
         
         # Convert jobs to list of string for easy LLM readability
         matches = convert_jobs_matched_to_string_list(jobs_matched)
 
         return {
-            "scraped_jobs_df": all_jobs,
+            "scraped_jobs": all_jobs,
             "matches": matches
         }
 
