@@ -1,0 +1,96 @@
+{
+  "job_title": "AI Developer",
+  "max_jobs_per_run": 10,
+  "run_interval_hours": 24,
+  "dry_run": false,
+  "profile_path": "./files/profile.md",
+  "output_path": "./data/cover_letter.md",
+  "environment": "development",
+  "debug_mode": false,
+  "database": {
+    "path": "./upwork_jobs.db",
+    "backup_enabled": true,
+    "backup_interval_hours": 24,
+    "max_backups": 7,
+    "performance_optimization": true
+  },
+  "scraping": {
+    "batch_size": 5,
+    "max_concurrent_pages": 10,
+    "page_timeout_seconds": 60,
+    "retry_failed_pages": true,
+    "max_page_retries": 3,
+    "user_agent_rotation": true,
+    "respect_robots_txt": true,
+    "delay_between_requests": 1.0,
+    "headless_browser": true
+  },
+  "scoring": {
+    "minimum_score": 7.0,
+    "enable_weighted_scoring": true,
+    "weights": {
+      "skills_match": 0.3,
+      "experience_level": 0.2,
+      "budget": 0.25,
+      "client_history": 0.15,
+      "job_description": 0.1
+    },
+    "confidence_threshold": 0.8,
+    "explanation_enabled": true,
+    "custom_criteria": {}
+  },
+  "llm": {
+    "default_model": "openai/gpt-4o-mini",
+    "temperature": 0.1,
+    "max_tokens": null,
+    "enable_cost_tracking": true,
+    "fallback_models": [
+      "openai/gpt-3.5-turbo",
+      "google/gemini-pro",
+      "groq/llama3-70b-8192"
+    ],
+    "rate_limit_rpm": 60,
+    "timeout_seconds": 30
+  },
+  "cover_letter": {
+    "generate_multiple_versions": true,
+    "max_versions": 3,
+    "target_word_count": 200,
+    "personalization_level": "high",
+    "include_keywords": true,
+    "professional_tone": true,
+    "custom_templates": {}
+  },
+  "interview": {
+    "generate_questions": true,
+    "include_sample_answers": true,
+    "research_client": true,
+    "industry_specific": true,
+    "confidence_tips": true,
+    "question_categories": [
+      "technical_skills",
+      "project_experience",
+      "communication",
+      "availability",
+      "pricing"
+    ]
+  },
+  "notifications": {
+    "enabled": true,
+    "email_notifications": false,
+    "console_notifications": true,
+    "log_level": "INFO",
+    "progress_updates": true,
+    "performance_alerts": true,
+    "error_notifications": true
+  },
+  "performance": {
+    "enable_caching": true,
+    "cache_ttl_hours": 24,
+    "parallel_processing": true,
+    "max_workers": 4,
+    "memory_limit_mb": 1024,
+    "enable_profiling": false,
+    "optimization_level": "balanced"
+  }
+}
