@@ -1,5 +1,5 @@
 {
-  "job_title": "AI Developer",
+  "job_title": "AI agent Developer",
   "max_jobs_per_run": 10,
   "run_interval_hours": 24,
   "dry_run": false,
