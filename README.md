@@ -101,12 +101,12 @@ graph TD
     D --> E[🎤 Interview Prep]
     E --> F[💾 Ready to Apply]
     
-    style A fill:#e1f5fe
-    style B fill:#f3e5f5
-    style C fill:#e8f5e8
-    style D fill:#fff3e0
-    style E fill:#fce4ec
-    style F fill:#e0f2f1
+    style A fill:#e1f5fe,stroke:#0277bd,stroke-width:2px,color:#000
+    style B fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#000
+    style C fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#000
+    style D fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000
+    style E fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#000
+    style F fill:#e0f2f1,stroke:#00796b,stroke-width:2px,color:#000
 ```
 
 ### 🎯 Core Features
