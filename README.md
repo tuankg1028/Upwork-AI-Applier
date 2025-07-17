@@ -1,155 +1,480 @@
-# UpworkScribe AI: Automated Jobs Application on Upwork
+<div align="center">
 
-**UpworkScribe AI is not just a tool; it's your partner in navigating the competitive world of freelancing, helping you secure more projects and grow your freelance career. 🚀**
+# 🤖 Upwork-AI-Applier
+### *Your AI-Powered Freelance Career Accelerator*
 
-## The Challenge of Modern Freelancing
+[![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![LangChain](https://img.shields.io/badge/LangChain-Framework-green.svg)](https://python.langchain.com/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://www.docker.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-The freelance marketplace has undergone a dramatic transformation in the digital age. While platforms like Upwork have opened up a world of opportunities, they have also intensified competition. Freelancers often find themselves spending countless hours searching for suitable projects, tailoring proposals, and crafting unique cover letters. This process can be not only time-consuming but also mentally exhausting, leading to missed opportunities and proposal fatigue.
+**Transform your freelancing game with AI! 🚀**  
+*Automatically discover, score, and apply to perfect-match Upwork jobs while you sleep*
 
-## How UpworkScribe AI Helps
-
-UpworkScribe AI simplifies the freelancing process by acting as your personal assistant. It offers:
-
-* **Automatic Job Scanning and Qualification:** Saves freelancers time by identifying and qualifying the most relevant job opportunities.
-* **Personalized Cover Letter:** automate the Creation of tailored cover letters for each project, increasing the chances of standing out to clients.
-* **Interview Preparation Support:** Generates materials to help freelancers prepare for client meetings and secure jobs with confidence.
-* **24/7 Availability:** can be setup to work around the clock, ensuring no opportunities are missed, even when you're offline.
-* **Cost-Effective:** Offers powerful features at a low cost, making it accessible to freelancers at all levels.
-* **Support For Multiple LLM Providers:** Can integrate with various large language models, offering flexibility and adaptability to meet different user needs.
-
-## Features
-
-### Jobs Scraping and Classification
-
-- **Job Monitoring**: The system scans Upwork for new project listings of the freelancer provided job titles, ensuring freelancer stay up-to-date.
-- **Intelligent Job Scoring**: Each job receives a score based on various criteria such: match with freelancer experience & skills, budget, duration, client history and past projects on the platform,etc. Only jobs scoring 7/10 or higher proceed for further analysis.
-
-### AI Cover Letter and Interview Script Generation
-
-- **Dynamic Cover Letter Creation**: AI agents crafts custom cover letters based on each job description and.
-- **Personalized Content**: Tailors cover letters to reflect the user’s unique writing style, skills, and relevant experiences.
-- **Interview Script and Questions**: Prepares a list of potential interview questions and a script for the freelancer, covering job-specific topics to improve interview readiness.
-- **Keyword Optimization**: Incorporates job-related keywords to enhance proposal relevance and client interest.
+</div>
 
 ---
 
-## How It Works
+## 🎯 The Freelancer's Dilemma
 
-1. **User Input**: The process starts with the user entering a job title.
-2. **Job Scraping**: The system scrapes Upwork for job listings that match the user-provided search queries, gathering relevant opportunities in real-time.
-3. **Job Scoring and Filtering**: Each job is scored by an AI agent, and only jobs with a score of 7/10 or higher are presented to the freelancer, filtering out lower-quality matches.
-5. **Cover Letter and Interview Preparation**: For strong job matches, the system generates:
-   - A personalized cover letter emphasizing the user’s qualifications and alignment with the job.
-   - A custom interview preparation script including potential questions to prepare the user for discussions with potential clients.
-6. **Review and Submission**: The generated cover letter, interview script, and questions are saved for user review, allowing for final adjustments before submission to prospective clients.
+<table>
+<tr>
+<td width="50%">
 
-### System Flowchart
+### 😩 The Problem
+- **Hours wasted** scrolling through job listings
+- **Proposal fatigue** from repetitive applications  
+- **Missed opportunities** while you sleep
+- **Generic applications** that don't stand out
+- **Inconsistent income** from hit-or-miss approach
 
-This is the detailed flow of the system:
+</td>
+<td width="50%">
 
-[![](https://mermaid.ink/img/pako:eNqdlMGO2jAQhl_FMlJPoNJyKETtSiEBxGqL2rJ7Sjg49oRYBDuyHegKePc6TlKye1olUiJP8n_zz4xiXzCVDLCH94oUGXoOY4Hs9Ri9aFBoLYrSaPQoE_TMTQ47NBo9ID_aUqsG9FKcpTpUn_Wu5nwnmFuBVIBqGesK6ue8kl1r0Xf07fOX8RWF623g_wmjkGtKFENP8jyqFFzsuwm66MOPhg0uQQb0gFKpXLE_iaEZ6FvXM3DgLyUpaNeStp7RCgQoYsBhflHknBLDpUCBFAaE2XXhjWwzX9FiE0b2ftNW6Lpf3JMG8mSn-ATGgNp1Ncu7Zm191InDuRoXLwz6hH6XoKsi3g5t4chVtCUnQC3uhvuu2GUtrIOVC4JY1KE2r7ltFqU8z70BTdOhNkoewBtMJpNmPTpzZjLva_F3SGUulTcYj8dd3G_wdHbHp9PpR_F5gydJL_egdU-SPnjYuqe98EXrns764Mv_o-uFrxp81s-92WNNEsZYrwlseiXAQ3wEdSSc2dPmUiWMscngCDH27JIRdYhxLG5WR0ojt6-CYs-oEoZYyXKfYS8lubZRWTD744ec2CPr2Ly9_QPS1oVz?type=png)](https://mermaid.live/edit#pako:eNqdlMGO2jAQhl_FMlJPoNJyKETtSiEBxGqL2rJ7Sjg49oRYBDuyHegKePc6TlKye1olUiJP8n_zz4xiXzCVDLCH94oUGXoOY4Hs9Ri9aFBoLYrSaPQoE_TMTQ47NBo9ID_aUqsG9FKcpTpUn_Wu5nwnmFuBVIBqGesK6ue8kl1r0Xf07fOX8RWF623g_wmjkGtKFENP8jyqFFzsuwm66MOPhg0uQQb0gFKpXLE_iaEZ6FvXM3DgLyUpaNeStp7RCgQoYsBhflHknBLDpUCBFAaE2XXhjWwzX9FiE0b2ftNW6Lpf3JMG8mSn-ATGgNp1Ncu7Zm191InDuRoXLwz6hH6XoKsi3g5t4chVtCUnQC3uhvuu2GUtrIOVC4JY1KE2r7ltFqU8z70BTdOhNkoewBtMJpNmPTpzZjLva_F3SGUulTcYj8dd3G_wdHbHp9PpR_F5gydJL_egdU-SPnjYuqe98EXrns764Mv_o-uFrxp81s-92WNNEsZYrwlseiXAQ3wEdSSc2dPmUiWMscngCDH27JIRdYhxLG5WR0ojt6-CYs-oEoZYyXKfYS8lubZRWTD744ec2CPr2Ly9_QPS1oVz)
+### ✨ The Solution
+- **AI-powered job discovery** that works 24/7
+- **Smart scoring system** finds perfect matches
+- **Personalized cover letters** for every application
+- **Interview prep materials** included automatically
+- **Consistent pipeline** of high-quality opportunities
+
+</td>
+</tr>
+</table>
+
+## 🚀 Why Upwork-AI-Applier?
+
+<div align="center">
+
+### *Your AI-Powered Freelance Assistant That Never Sleeps*
+
+</div>
+
+<table>
+<tr>
+<td align="center" width="33%">
+
+### 🎯 Smart Discovery
+**Intelligent Job Scanning**  
+Automatically finds and scores job opportunities based on your skills, experience, and preferences
+
+</td>
+<td align="center" width="33%">
+
+### ✍️ Personalized Content
+**AI-Generated Applications**  
+Creates tailored cover letters and interview prep materials that showcase your unique value
+
+</td>
+<td align="center" width="33%">
+
+### 🔄 24/7 Automation
+**Never Miss an Opportunity**  
+Works around the clock to ensure you're first in line for the best projects
+
+</td>
+</tr>
+</table>
+
+### 🎨 Key Features
+
+- 🔍 **Smart Job Discovery**: AI scans Upwork for opportunities matching your profile
+- 📊 **Intelligent Scoring**: Only jobs scoring 7/10+ make it to your pipeline  
+- 📝 **Custom Cover Letters**: Tailored applications that highlight your relevant experience
+- 🎤 **Interview Prep**: Get ready with AI-generated questions and talking points
+- 💰 **Cost-Effective**: Powerful automation at freelancer-friendly pricing
+- 🔄 **Multi-LLM Support**: Works with OpenAI, Claude, Gemini, and Groq
+
+## 🔧 How It Works
+
+<div align="center">
+
+### *From Job Search to Interview-Ready in Minutes*
+
+</div>
+
+```mermaid
+graph TD
+    A[🔍 Job Search] --> B[🎯 Smart Filtering]
+    B --> C[📊 AI Scoring]
+    C --> D[✍️ Cover Letter Generation]
+    D --> E[🎤 Interview Prep]
+    E --> F[💾 Ready to Apply]
+    
+    style A fill:#e1f5fe
+    style B fill:#f3e5f5
+    style C fill:#e8f5e8
+    style D fill:#fff3e0
+    style E fill:#fce4ec
+    style F fill:#e0f2f1
+```
+
+### 🎯 Core Features
+
+<table>
+<tr>
+<td width="50%">
+
+#### 🔍 **Smart Job Discovery**
+- Real-time Upwork monitoring for your target roles
+- Advanced filtering based on your profile and preferences  
+- Automatic duplicate detection and database storage
+- Continuous background scanning (24/7 operation)
+
+</td>
+<td width="50%">
+
+#### 📊 **Intelligent Scoring System**
+- Multi-factor job evaluation (skills, budget, client history)
+- Machine learning-based compatibility scoring
+- Only 7/10+ jobs proceed to application generation
+- Transparent scoring criteria you can customize
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+#### ✍️ **AI-Powered Content Creation**
+- Dynamic cover letter generation for each opportunity
+- Personalized content matching your writing style
+- Keyword optimization for better client engagement
+- Professional formatting and structure
+
+</td>
+<td width="50%">
+
+#### 🎤 **Interview Preparation Suite**
+- Job-specific interview questions and talking points
+- Strategic response frameworks and examples
+- Client background research and insights
+- Confidence-building preparation materials
+
+</td>
+</tr>
+</table>
 
 ---
 
-## Tech Stack
+## 🛠️ Tech Stack
 
--   **LangGraph & LangChain**: Frameworks used for building AI agents and interacting with LLMs (GPT-4o, Llama 3, Gemini).
--   **LangSmith**: For monitoring the different LLM calls and AI agents' interactions.
--   **Playwright**: For scraping and crawling websites.
+<div align="center">
+
+### *Built with Modern AI and Automation Tools*
+
+</div>
+
+<table>
+<tr>
+<td align="center" width="25%">
+
+<img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python"/>
+
+**Core Language**  
+*Python 3.9+*
+
+</td>
+<td align="center" width="25%">
+
+<img src="https://img.shields.io/badge/LangChain-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white" alt="LangChain"/>
+
+**AI Framework**  
+*LangChain & LangGraph*
+
+</td>
+<td align="center" width="25%">
+
+<img src="https://img.shields.io/badge/Playwright-2EAD33?style=for-the-badge&logo=playwright&logoColor=white" alt="Playwright"/>
+
+**Web Automation**  
+*Playwright*
+
+</td>
+<td align="center" width="25%">
+
+<img src="https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite"/>
+
+**Database**  
+*SQLite*
+
+</td>
+</tr>
+</table>
+
+#### 🤖 **AI Models Supported**
+- **OpenAI** (GPT-4, GPT-3.5-turbo) - Default recommendation
+- **Google** (Gemini Pro) - For advanced reasoning
+- **Anthropic** (Claude) - For creative writing
+- **Groq** (Llama 3) - For fast inference
+
+#### 🔧 **Additional Tools**
+- **LangSmith** - AI workflow monitoring and debugging
+- **Docker** - Containerized deployment
+- **BeautifulSoup** - HTML parsing and content extraction
 
 ---
 
-## How to Run
+## 🚀 Quick Start
 
-### Setup
+<div align="center">
+
+### *Get Up and Running in Under 5 Minutes*
+
+</div>
+
+### 📋 Prerequisites
+
+<table>
+<tr>
+<td align="center" width="33%">
+
+🐍 **Python 3.9+**  
+*Required for running the application*
+
+</td>
+<td align="center" width="33%">
+
+🔑 **API Keys**  
+*At least one LLM provider key*
+
+</td>
+<td align="center" width="33%">
+
+🐳 **Docker** *(Optional)*  
+*For containerized deployment*
+
+</td>
+</tr>
+</table>
+
+### 🛠️ Installation
 
 1. **Clone the repository:**
 
-   ```sh
-   git clone https://github.com/kaymen99/Upwork-AI-jobs-applier.git
-   cd Upwork-AI-jobs-applier
+   ```bash
+   git clone https://github.com/tuankg1028/Upwork-AI-Applier.git
+   cd Upwork-AI-Applier
    ```
 
 2. **Set up environment variables:**
 
-   Create a `.env` file in the root directory of the project and add your API keys, see `.env.example` to know all the parameters you will need.
-
-### Run Locally
-
-#### Prerequisites
-
-- Python 3.9+
-- Necessary Python libraries (listed in `requirements.txt`)
-- API keys for LLM models you want to use (OpenAI, Claude, Gemini, Groq,...)
-
-#### Running the Application
-
-1. **Create and activate a virtual environment:**
-
-   ```sh
-   python -m venv venv
-   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+   ```bash
+   cp .env.example .env
+   # Edit .env with your API keys
    ```
 
-2. **Install the required packages:**
+3. **Create virtual environment:**
 
-   ```sh
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # Windows: venv\Scripts\activate
+   ```
+
+4. **Install dependencies:**
+
+   ```bash
    pip install -r requirements.txt
    playwright install firefox
    ```
 
-3. **Start the workflow:**
+5. **Configure your profile:**
 
-   ```sh
-   python main.py
+   ```bash
+   # Edit files/profile.md with your freelancer information
+   nano files/profile.md
    ```
 
-   The application will start scraping job listings, classifying them, generating cover letters, and saving the results. By default, all the generated cover letters will be saved in the `data/cover_letter.txt` file alongside a csv file including all the jobs details.
+### 🎯 Running the Application
 
-4. **Test the Upwork jobs scraping tool** by running:
+#### Option 1: Full Automation
+```bash
+python main.py
+```
+*Runs the complete workflow: scraping → scoring → cover letter generation*
 
-   ```sh
-   python scrape_upwork_jobs.py
-   ```
+#### Option 2: Test Scraping Only
+```bash
+python scrape_upwork_jobs.py
+```
+*Just tests the job scraping functionality*
+
+### 📊 What Happens Next?
+
+<table>
+<tr>
+<td width="50%">
+
+**🔍 Job Discovery**
+- Scans Upwork for your target roles
+- Filters and scores opportunities
+- Saves results to SQLite database
+
+</td>
+<td width="50%">
+
+**📝 Content Generation**
+- Creates personalized cover letters
+- Generates interview preparation materials
+- Saves everything to `data/cover_letter.md`
+
+</td>
+</tr>
+</table>
 
 ---
 
-### Run in Docker
+## 🐳 Docker Deployment
 
-#### Prerequisites
+<div align="center">
 
-- Docker installed on your machine.
-- API keys for LLM models you want to use (OpenAI, Claude, Gemini, Groq,...)
+### *One-Click Deployment with Docker*
 
-#### Running the Application
+</div>
 
-1. **Build and run the Docker container:**
+Perfect for production environments or if you prefer containerized applications.
 
-   ```sh
-   docker build -t upwork-auto-jobs-applier-using-ai .
-   docker run -e OPENAI_API_KEY=YOUR_API_KEY_HERE -v ./data:/usr/src/app/data upwork-auto-jobs-applier-using-ai
+### 🚀 Quick Docker Setup
+
+1. **Build the container:**
+   ```bash
+   docker build -t upwork-ai-applier .
    ```
 
-   The application will start scraping job listings, classifying them, generating cover letters, and saving the results. By default, all the generated cover letters will be saved in the `data/cover_letters.txt` file.
-
-2. **Test the Upwork jobs scraping tool** in Docker by running:
-
-   ```sh
-   docker run -e OPENAI_API_KEY=YOUR_API_KEY_HERE -v ./data:/usr/src/app/data upwork-auto-jobs-applier-using-ai python scrape_upwork_jobs.py
+2. **Run with environment variables:**
+   ```bash
+   docker run -e OPENAI_API_KEY=your_key_here \
+              -v ./data:/app/data \
+              upwork-ai-applier
    ```
+
+3. **Test scraping only:**
+   ```bash
+   docker run -e OPENAI_API_KEY=your_key_here \
+              -v ./data:/app/data \
+              upwork-ai-applier python scrape_upwork_jobs.py
+   ```
+
+### 🔧 Environment Variables for Docker
+
+```bash
+# Required
+OPENAI_API_KEY=your_openai_key
+
+# Optional (for other LLM providers)
+GOOGLE_API_KEY=your_google_key
+GROQ_API_KEY=your_groq_key
+LANGCHAIN_API_KEY=your_langsmith_key
+```
 
 ---
 
-### Customization
+## 🎨 Customization
 
-- To use this automation for your own profile, just add your profile into `files/profile.md` and remove the example profile.
+<div align="center">
 
-- You can customize the behavior of each AI agent by modifying the corresponding agent prompt in the `prompts` script.
+### *Make It Your Own*
 
-## Contributing
+</div>
 
-Contributions are welcome! Please open an issue or submit a pull request for any changes.
+<table>
+<tr>
+<td width="50%">
 
-## Contact
+### 👤 **Profile Setup**
+```bash
+# Edit your freelancer profile
+nano files/profile.md
+```
+- Add your skills and experience
+- Include relevant project history
+- Customize your writing style
+- Set your target job types
 
-If you have any questions or suggestions, feel free to contact me at `aymenMir1001@gmail.com`.
+</td>
+<td width="50%">
+
+### 🤖 **AI Behavior**
+```bash
+# Modify AI prompts
+nano src/prompts.py
+```
+- Adjust job scoring criteria
+- Customize cover letter templates
+- Fine-tune interview questions
+- Set response personality
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### ⚙️ **Configuration**
+```python
+# In main.py
+job_title = "Your Target Role"
+num_jobs = 15  # Jobs to scrape
+batch_size = 3  # Parallel processing
+```
+
+</td>
+<td width="50%">
+
+### 🎯 **Scoring System**
+```python
+# Minimum score threshold
+score_threshold = 7  # Only 7/10+ jobs
+```
+- Adjust based on your preferences
+- Higher = more selective
+- Lower = more opportunities
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🤝 Contributing
+
+<div align="center">
+
+**We welcome contributions!** 🎉
+
+</div>
+
+Whether you're fixing bugs, adding features, or improving documentation:
+
+1. **Fork the repository**
+2. **Create a feature branch** (`git checkout -b feature/amazing-feature`)
+3. **Commit your changes** (`git commit -m 'Add amazing feature'`)
+4. **Push to the branch** (`git push origin feature/amazing-feature`)
+5. **Open a Pull Request**
+
+### 🐛 Found a Bug?
+[Open an issue](https://github.com/tuankg1028/Upwork-AI-Applier/issues) with:
+- Steps to reproduce
+- Expected vs actual behavior
+- Your environment details
+
+---
+
+## 📬 Contact & Support
+
+<div align="center">
+
+**Questions? Suggestions? We'd love to hear from you!**
+
+[![Email](https://img.shields.io/badge/Email-lethanhtuan1028@gmail.com-red.svg)](mailto:lethanhtuan1028@gmail.com)
+[![GitHub Issues](https://img.shields.io/badge/GitHub-Issues-blue.svg)](https://github.com/tuankg1028/Upwork-AI-Applier/issues)
+
+</div>
+
+---
+
+<div align="center">
+
+### 🌟 **Star this repo if it helped you land your dream project!** 🌟
+
+**Happy freelancing!** 🚀
+
+</div>
