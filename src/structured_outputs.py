@@ -1,6 +1,6 @@
 from enum import Enum
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 
 class JobType(str, Enum):
     FIXED = "Fixed"
@@ -54,3 +54,6 @@ class JobApplication(BaseModel):
     job_description: str = Field(description="The full description of the job")
     cover_letter: str = Field(description="The generated cover letter")
     interview_preparation: str = Field(description="The generated interview preparation")
+    metadata: Optional[Dict[str, Any]] = Field(description="Additional metadata about the application", default=None)
+    quality_score: Optional[float] = Field(description="Quality score of the application", default=None)
+    visual_elements_count: Optional[int] = Field(description="Number of visual elements included", default=0)

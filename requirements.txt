@@ -9,3 +9,13 @@ colorama
 python-dotenv
 bs4
 pyyaml
+matplotlib
+seaborn
+pillow
+numpy
+nltk
+textstat
+spacy
+scikit-learn
+icalendar
+pytz
